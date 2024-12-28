@@ -2,16 +2,18 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure the `uploads` directory exists
-const uploadDir = path.join(__dirname, 'uploads');
+// Use the writable `/tmp` directory for Vercel
+const uploadDir = path.join('/tmp', 'uploads');
+
+// Ensure the `/tmp/uploads` directory exists
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+    fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 // Configure Multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Temporary storage directory
+        cb(null, uploadDir); // Set destination to `/tmp/uploads`
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
