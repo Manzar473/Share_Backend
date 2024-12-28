@@ -30,10 +30,40 @@ const userSchema = new mongoose.Schema(
             enum: ['user', 'admin'],
             default: 'user',
         },
+        isProfileCompleted: {
+            type: Boolean,
+            default: false,
+        },
+        address: {
+            city: {
+                type: String,
+                trim: true,
+                default: '',
+            },
+            areaName: {
+                type: String,
+                trim: true,
+                default: '',
+            },
+        },
+        contact: {
+            type: String,
+            trim: true,
+            default: '',
+        },
+        image: {
+            type: String,
+            trim: true,
+            default: '', // Default value if no image is provided
+        },
         createdAt: {
             type: Date,
             default: Date.now,
         },
+        gender:{
+            type: String,
+            enum: ['male', 'female'],
+        }
     },
     {
         timestamps: true, // Adds createdAt and updatedAt

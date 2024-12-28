@@ -1,6 +1,7 @@
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const {uploadToCloudinary} = require('../cloudinary')
 
 // Signup Function
 const signup = async (req, res) => {
@@ -57,15 +58,67 @@ const login = async (req, res) => {
         const token = jwt.sign(
             {id:user._id},
             process.env.JWT_SECRET,
-            { expiresIn: '24h' } // Token expiration time
         );
+
+
+        // Check if the profile is completed
+        if (!user.isProfileCompleted) {
+            return res.status(200).json({
+                message: 'Profile is not completed',
+                isProfileCompleted: false,
+                token
+            });
+        }
 
         res.status(200).json({
             message: 'Login successful!',
             token,
+            isProfileCompleted: true,
         });
     } catch (error) {
         res.status(500).json({ message: 'Error logging in.', error: error.message });
+    }
+};
+
+const updateProfile = async (req, res) => {
+    const { address, contact, gender } = req.body;
+    const image = req.file; 
+    const userId = req.user.id; 
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required.' });
+    }
+
+    try {
+        let imageUrl;
+        // Upload image to Cloudinary if provided
+        if (image) {
+            imageUrl = await uploadToCloudinary(image.path, 'user_profiles');  // Upload the image
+        }
+
+        // Update the user's profile
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                ...(address && { address }), // Update address if provided
+                ...(contact && { contact }), // Update contact info if provided
+                ...(gender && { gender }),
+                ...(imageUrl && { image: imageUrl }), // Update image URL if provided
+                isProfileCompleted: true,
+            },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.status(200).json({
+            message: 'Profile updated successfully!',
+            user: updatedUser,
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating profile.', error: error.message });
     }
 };
 
@@ -88,4 +141,4 @@ const getProfile = async (req, res) => {
     }
 };
 
-module.exports = { signup, login ,getProfile};
+module.exports = { signup, login ,getProfile,updateProfile};
