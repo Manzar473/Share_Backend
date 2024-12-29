@@ -3,11 +3,11 @@ const { uploadToCloudinary } = require('../cloudinary')
 
 // Create a new product
 exports.createProduct = async (req, res) => {
-    const { name, description, quantity, category, isAvailable, postedBy } = req.body;
+    const { name, description, quantity, category, isAvailable } = req.body;
     const image = req.file; 
 
     // Validate input
-    if (!name || !description || !quantity || !category || !postedBy) {
+    if (!name || !description || !quantity || !category) {
         return res.status(400).json({ message: 'All fields except the image are required.' });
     }
 
@@ -29,7 +29,7 @@ exports.createProduct = async (req, res) => {
             category,
             image: imageUrl, // Save the uploaded image URL
             isAvailable,
-            postedBy,
+            postedBy:req.user.id,
         });
 
         await newProduct.save();
