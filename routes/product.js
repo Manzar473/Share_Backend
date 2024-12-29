@@ -6,22 +6,24 @@ const {
     updateProduct,
     deleteProduct,
 } = require('../controllers/productController');
+const authenticateToken = require("../middleware/authMiddleware");
+const upload = require("../multer");
 
 const router = express.Router();
 
 // Create a product
-router.post('/', createProduct);
+router.post('/',authenticateToken,upload.single("image"), createProduct);
 
 // Get all products
-router.get('/', getAllProducts);
+router.get('/',authenticateToken, getAllProducts);
 
 // Get a product by ID
-router.get('/:id', getProductById);
+router.get('/:id',authenticateToken, getProductById);
 
 // Update a product by ID
-router.put('/:id', updateProduct);
+router.put('/:id',authenticateToken, updateProduct);
 
 // Delete a product by ID
-router.delete('/:id', deleteProduct);
+router.delete('/:id',authenticateToken, deleteProduct);
 
 module.exports = router;

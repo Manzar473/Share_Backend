@@ -1,21 +1,33 @@
 const Product = require('../models/products');
+const { uploadToCloudinary } = require('../cloudinary')
 
 // Create a new product
 exports.createProduct = async (req, res) => {
-    const { name, description, quantity, category, image, isAvailable, postedBy } = req.body;
+    const { name, description, quantity, category, isAvailable, postedBy } = req.body;
+    const image = req.file; 
 
     // Validate input
-    if (!name || !description || !quantity || !category || !image || !postedBy) {
-        return res.status(400).json({ message: 'All fields are required.' });
+    if (!name || !description || !quantity || !category || !postedBy) {
+        return res.status(400).json({ message: 'All fields except the image are required.' });
     }
 
     try {
+        let imageUrl;
+
+        // Upload image to Cloudinary if provided
+        if (image) {
+            imageUrl = await uploadToCloudinary(image.path, 'product_images'); // Function to upload the image
+        } else {
+            return res.status(400).json({ message: 'Image is required.' });
+        }
+
+        // Create the product
         const newProduct = new Product({
             name,
             description,
             quantity,
             category,
-            image,
+            image: imageUrl, // Save the uploaded image URL
             isAvailable,
             postedBy,
         });
