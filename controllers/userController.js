@@ -82,7 +82,7 @@ const login = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-    const { address, contact, gender } = req.body;
+    const { city, area, contact, gender } = req.body;
     const image = req.file; 
     const userId = req.user.id; 
 
@@ -101,7 +101,8 @@ const updateProfile = async (req, res) => {
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             {
-                ...(address && { address }), // Update address if provided
+                ...(city && { city }), 
+                ...(area && { area }), 
                 ...(contact && { contact }), // Update contact info if provided
                 ...(gender && { gender }),
                 ...(imageUrl && { image: imageUrl }), // Update image URL if provided
