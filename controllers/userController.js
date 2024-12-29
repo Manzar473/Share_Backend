@@ -16,7 +16,7 @@ const signup = async (req, res) => {
         // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(409).json({ message: 'User already exists.' });
+            return res.status(409).json({ message: 'User with this email already exists.' });
         }
 
         // Hash the password
@@ -45,7 +45,7 @@ const login = async (req, res) => {
         // Find the user by email
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'Invalid credentials.' });
         }
 
         // Verify the password
@@ -64,7 +64,7 @@ const login = async (req, res) => {
         // Check if the profile is completed
         if (!user.isProfileCompleted) {
             return res.status(200).json({
-                message: 'Profile is not completed',
+                message: 'Please complete your profile',
                 isProfileCompleted: false,
                 token
             });
@@ -74,6 +74,7 @@ const login = async (req, res) => {
             message: 'Login successful!',
             token,
             isProfileCompleted: true,
+            user
         });
     } catch (error) {
         res.status(500).json({ message: 'Error logging in.', error: error.message });
