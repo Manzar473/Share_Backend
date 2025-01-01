@@ -27,7 +27,7 @@ const createRequest = async (req, res) => {
         });
 
         const savedRequest = await newRequest.save();
-        res.status(201).json({ message: 'Request created successfully.', request: savedRequest });
+        res.status(201).json({ message: 'Request submitted successfully.', request: savedRequest });
     } catch (error) {
         res.status(500).json({ message: 'Error creating request.', error: error.message });
     }

@@ -59,6 +59,18 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
+//Get products by User
+exports.getProductsByUser = async (req, res) => {
+    try {
+        const products = await Product.find({ postedBy: req.user.id })
+            .sort({ createdAt: -1 }); // Sort by creation date, newest first
+
+        res.status(200).json({ message: 'Products fetched successfully.', products });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching products.', error: error.message });
+    }
+};
+
 // Get a single product by ID
 exports.getProductById = async (req, res) => {
   try {

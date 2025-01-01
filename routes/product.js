@@ -5,6 +5,7 @@ const {
     getProductById,
     updateProduct,
     deleteProduct,
+    getProductsByUser
 } = require('../controllers/productController');
 const authenticateToken = require("../middleware/authMiddleware");
 const upload = require("../multer");
@@ -16,6 +17,9 @@ router.post('/',authenticateToken,upload.single("image"), createProduct);
 
 // Get all products
 router.get('/',authenticateToken, getAllProducts);
+
+// Get products by User
+router.get('/me',authenticateToken, getProductsByUser);
 
 // Get a product by ID
 router.get('/:id',authenticateToken, getProductById);
