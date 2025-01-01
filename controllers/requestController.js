@@ -44,8 +44,8 @@ const getRequestsByProductId = async (req, res) => {
 
     try {
         const requests = await Request.find({ productId })
-            .populate('requestBy', 'username email')
-            .populate('productId', 'name description');
+            .populate('requestBy', 'username email image city area')
+            .populate('productId', 'name description image');
 
         res.status(200).json({ message: 'Requests fetched successfully.', requests });
     } catch (error) {
@@ -57,8 +57,9 @@ const getRequestsByProductId = async (req, res) => {
 const getRequestsByUserId = async (req, res) => {
     try {
         const requests = await Request.find({ requestBy: req.user.id })
-            .populate('productId', 'name description')
-            .populate('requestBy', 'username email');
+        .populate('requestBy', 'username email image city area')
+        .populate('requestTo', 'username email image city area')
+        .populate('productId', 'name description image');
 
         res.status(200).json({ message: 'Requests fetched successfully.', requests });
     } catch (error) {
@@ -71,8 +72,9 @@ const getRequestsByUserId = async (req, res) => {
 const getRequestsReceivedByUserId = async (req, res) => {
     try {
         const requests = await Request.find({ requestTo: req.user.id })
-            .populate('productId', 'name description')
-            .populate('requestBy', 'username email');
+        .populate('requestBy', 'username email image city area')
+        .populate('requestTo', 'username email image city area')
+        .populate('productId', 'name description image');
 
         res.status(200).json({ message: 'Requests fetched successfully.', requests });
     } catch (error) {

@@ -52,7 +52,7 @@ exports.getAllProducts = async (req, res) => {
 // Get a single product by ID
 exports.getProductById = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id).populate('postedBy', 'username email');
+        const product = await Product.findById(req.params.id).populate('postedBy', 'username email image city area');
         if (!product) {
             return res.status(404).json({ message: 'Product not found.' });
         }
