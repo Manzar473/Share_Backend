@@ -63,6 +63,7 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductsByUser = async (req, res) => {
     try {
         const products = await Product.find({ postedBy: req.user.id })
+        .populate("postedBy", "area city")
             .sort({ createdAt: -1 }); // Sort by creation date, newest first
 
         res.status(200).json({ message: 'Products fetched successfully.', products });
