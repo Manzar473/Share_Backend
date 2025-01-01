@@ -9,6 +9,17 @@ const createRequest = async (req, res) => {
     }
 
     try {
+        // Check if the user has already requested this product
+        const existingRequest = await Request.findOne({
+            requestBy: req.user.id,
+            productId,
+        });
+
+        if (existingRequest) {
+            return res.status(400).json({ message: 'You have already requested this product.' });
+        }
+
+        // Create a new request
         const newRequest = new Request({
             requestBy: req.user.id, // Extracted from the JWT token in middleware
             productId,
@@ -45,7 +56,7 @@ const getRequestsByProductId = async (req, res) => {
     try {
         const requests = await Request.find({ productId })
             .populate('requestBy', 'username email image city area')
-            .populate('productId', 'name description image');
+            .populate('productId', 'name description image') .sort({ createdAt: -1 });
 
         res.status(200).json({ message: 'Requests fetched successfully.', requests });
     } catch (error) {
@@ -59,7 +70,7 @@ const getRequestsByUserId = async (req, res) => {
         const requests = await Request.find({ requestBy: req.user.id })
         .populate('requestBy', 'username email image city area')
         .populate('requestTo', 'username email image city area')
-        .populate('productId', 'name description image');
+        .populate('productId', 'name description image').sort({ createdAt: -1 });;
 
         res.status(200).json({ message: 'Requests fetched successfully.', requests });
     } catch (error) {
@@ -74,7 +85,7 @@ const getRequestsReceivedByUserId = async (req, res) => {
         const requests = await Request.find({ requestTo: req.user.id })
         .populate('requestBy', 'username email image city area')
         .populate('requestTo', 'username email image city area')
-        .populate('productId', 'name description image');
+        .populate('productId', 'name description image').sort({ createdAt: -1 });
 
         res.status(200).json({ message: 'Requests fetched successfully.', requests });
     } catch (error) {
