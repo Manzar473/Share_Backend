@@ -3,6 +3,7 @@ const connectDB = require('./db');
 const userRoutes = require('./routes/users.js')
 const productRoutes = require('./routes/product.js')
 const requestRoutes = require('./routes/request.js')
+const reviewRoutes = require('./routes/reviews.js')
 const app = express()
 require('dotenv').config()
 connectDB();
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/requests', requestRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.listen(process.env.PORT,()=>{
     console.log(`App is running on ${process.env.PORT}`);
