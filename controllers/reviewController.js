@@ -22,7 +22,7 @@ const getReviewsByUserFor = async (req, res) => {
 
     try {
         const reviews = await Review.find({ reviewFor: userId })
-            .populate('reviewBy', 'username email area contact city')
+            .populate('reviewBy', 'username email area contact city image')
             .sort({ createdAt: -1 });
         res.status(200).json({ message: 'Reviews fetched successfully.', reviews });
     } catch (error) {
