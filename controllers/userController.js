@@ -54,6 +54,10 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials.' });
         }
 
+        if (user.blocked) {
+            return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
+        }
+
         // Generate JWT
         const token = jwt.sign(
             {id:user._id},
@@ -143,4 +147,52 @@ const getProfile = async (req, res) => {
     }
 };
 
-module.exports = { signup, login ,getProfile,updateProfile};
+
+// FOR ADMIN ONLY
+const getAllUsers = async (req, res) => {
+    try {
+        // Fetch all users with the role "user"
+        const users = await User.find({ role: 'user' }).select('-password');
+
+        if (!users.length) {
+            return res.status(404).json({ message: 'No users found' });
+        }
+
+        res.status(200).json({ message: 'Users fetched successfully.', users });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching users.', error: error.message });
+    }
+};
+
+const toggleBlockStatus = async (req, res) => {
+    const { userId } = req.params;
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required.' });
+    }
+
+    try {
+        // Find the user by ID
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // Toggle the `blocked` status
+        user.blocked = !user.blocked;
+
+        // Save the updated user document
+        await user.save();
+
+        res.status(200).json({
+            message: `User ${user.blocked ? 'blocked' : 'unblocked'} successfully.`,
+            user,
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating user blocked status.', error: error.message });
+    }
+};
+
+
+module.exports = { signup, login ,getProfile,updateProfile, getAllUsers, toggleBlockStatus};

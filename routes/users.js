@@ -4,6 +4,8 @@ const {
   login,
   getProfile,
   updateProfile,
+  getAllUsers,
+  toggleBlockStatus
 } = require("../controllers/userController"); // Controller functions
 const authenticateToken = require("../middleware/authMiddleware");
 const upload = require("../multer");
@@ -24,5 +26,7 @@ router.post(
 );
 
 router.get("/profile", authenticateToken, getProfile);
+router.get("/all-users", authenticateToken, getAllUsers);
+router.get("/block-status/:userId", authenticateToken, toggleBlockStatus);
 
 module.exports = router;

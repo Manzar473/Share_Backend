@@ -62,6 +62,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["male", "female"],
     },
+    blocked:{
+      type:Boolean,
+      default:false
+    }
   },
   {
     timestamps: true, // Adds createdAt and updatedAt
