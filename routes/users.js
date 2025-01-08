@@ -27,6 +27,6 @@ router.post(
 
 router.get("/profile", authenticateToken, getProfile);
 router.get("/all-users", authenticateToken, getAllUsers);
-router.get("/block-status/:userId", authenticateToken, toggleBlockStatus);
+router.post("/block-status/:userId", authenticateToken, toggleBlockStatus);
 
 module.exports = router;
